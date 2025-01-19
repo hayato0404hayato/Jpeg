@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ランダム画像表示サイト</title>
+    <style>
+        .image-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .image-container img {
+            margin: 10px;
+            width: 200px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>ランダム画像表示サイト</h1>
+    <div class="image-container" id="image-container"></div>
+
+    <script>
+        const baseUrl = "https://pink-pink-channel.tokyo/public/img/TK/tuck_up_the_skirt_panties_erotic_pictures_";
+        const startNumber = 101;
+        const endNumber = 347;
+        const totalImages = 40;
+
+        function getRandomNumber(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function generateRandomImageUrls(base, start, end, count) {
+            const imageUrls = new Set();
+            while (imageUrls.size < count) {
+                const randomNum = getRandomNumber(start, end);
+                const imageUrl = `${base}${String(randomNum).padStart(7, '0')}.jpg`;
+                imageUrls.add(imageUrl);
+            }
+            return Array.from(imageUrls);
+        }
+
+        function displayImages(imageUrls) {
+            const container = document.getElementById('image-container');
+            imageUrls.forEach(url => {
+                const img = document.createElement('img');
+                img.src = url;
+                container.appendChild(img);
+            });
+        }
+
+        const randomImageUrls = generateRandomImageUrls(baseUrl, startNumber, endNumber, totalImages);
+        displayImages(randomImageUrls);
+    </script>
+</body>
+</html>
