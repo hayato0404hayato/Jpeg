@@ -3,62 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ランダム画像表示サイト</title>
+    <title>Apple風ギャラリー</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap">
     <style>
-        .image-container {
-            display: flex;
-            flex-wrap: wrap;
+        body {
+            margin: 0;
+            font-family: 'Outfit', sans-serif;
+            background: #f5f5f7;
+            color: #111;
+            overflow-x: hidden;
         }
+
+        h1 {
+            text-align: center;
+            padding: 2rem 0 1rem 0;
+            font-weight: 700;
+            font-size: 2.4rem;
+        }
+
+        /* グリッド */
+        .image-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 1rem;
+            padding: 0 3% 3% 3%;
+        }
+
         .image-container img {
-            margin: 10px;
-            width: 200px;
+            width: 100%;
             height: auto;
+            border-radius: 12px;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+            transition: transform 0.25s ease, box-shadow 0.3s ease, opacity 0.4s ease;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .image-container img.loaded {
+            opacity: 1;
+        }
+
+        .image-container img:hover {
+            transform: scale(1.04);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+        }
+
+        /* モーダル */
+        #modal {
+            position: fixed;
+            top:0; left:0;
+            width:100%; height:100%;
+            background: rgba(0,0,0,0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity:0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 9999;
+        }
+
+        #modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
         }
     </style>
+    <script src="https://pl28491036.effectivegatecpm.com/bb/15/99/bb1599d858b2804291889b081d278847.js"></script>
 </head>
 <body>
-    <h1>ランダム画像表示サイト</h1>
+    <h1>Appleスタイル ギャラリー</h1>
+
     <div class="image-container" id="image-container"></div>
-<!-- admax -->
-<script src="https://adm.shinobi.jp/s/97e29ec65cf8258cd07e8a54349bb367"></script>
-<!-- admax -->
-    <!-- admax -->
-<script src="https://adm.shinobi.jp/s/1c50face36e97a99b6e914ec385227c2"></script>
-<!-- admax -->
+
+    <!-- モーダル -->
+    <div id="modal"><img src="" alt=""></div>
+
     <script>
         const baseUrl = "https://pink-pink-channel.tokyo/public/img/TK/tuck_up_the_skirt_panties_erotic_pictures_";
         const startNumber = 101;
         const endNumber = 347;
-        const totalImages = 40;
+        const batchCount = 40; // 一度に読み込む枚数
+
+        let loading = false;
 
         function getRandomNumber(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
-        function generateRandomImageUrls(base, start, end, count) {
-            const imageUrls = new Set();
-            while (imageUrls.size < count) {
-                const randomNum = getRandomNumber(start, end);
-                const imageUrl = `${base}${String(randomNum).padStart(7, '0')}.jpg`;
-                imageUrls.add(imageUrl);
+        function generateRandomImages(count) {
+            const urls = [];
+            for (let i = 0; i < count; i++) {
+                const n = getRandomNumber(startNumber, endNumber);
+                urls.push(`${baseUrl}${String(n).padStart(7,'0')}.jpg`);
             }
-            return Array.from(imageUrls);
+            return urls;
         }
 
-        function displayImages(imageUrls) {
+        function appendImages() {
+            if (loading) return;
+            loading = true;
+
             const container = document.getElementById('image-container');
-            imageUrls.forEach(url => {
+            const urls = generateRandomImages(batchCount);
+
+            urls.forEach(url => {
                 const img = document.createElement('img');
                 img.src = url;
+
+                img.onload = () => {
+                    img.classList.add("loaded");
+                };
+
+                img.addEventListener("click", () => openModal(img.src));
                 container.appendChild(img);
             });
+
+            loading = false;
         }
 
-        const randomImageUrls = generateRandomImageUrls(baseUrl, startNumber, endNumber, totalImages);
-        displayImages(randomImageUrls);
+        // モーダル開閉
+        const modal = document.getElementById('modal');
+        const modalImg = modal.querySelector('img');
+
+        function openModal(src) {
+            modalImg.src = src;
+            modal.style.opacity = 1;
+            modal.style.pointerEvents = "auto";
+        }
+
+        modal.addEventListener("click", () => {
+            modal.style.opacity = 0;
+            modal.style.pointerEvents = "none";
+        });
+
+        // 無限スクロール
+        window.addEventListener("scroll", () => {
+            const bottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 600;
+            if (bottom) appendImages();
+        });
+
+        // 初回ロード
+        appendImages();
     </script>
-    <!-- admax -->
-<script src="https://adm.shinobi.jp/s/727256e749b3cb7a4accfb26866ba493"></script>
-<!-- admax -->
 </body>
 </html>
